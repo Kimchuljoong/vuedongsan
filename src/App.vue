@@ -9,8 +9,10 @@
 
     <div class="black-bg" v-if="showModal" v-on:click="showModal=false" >
       <div class="white-bg">
+        <img :src="products[modalProduct].image" style="width:100%"/>
         <h4>{{ products[modalProduct].title }}</h4>
         <p>{{ products[modalProduct].content }}</p>
+        <p>{{ products[modalProduct].price }}</p>
       </div>
     </div>
 
@@ -65,13 +67,14 @@ div {
   height: 100%;
   background: rgba(0,0,0,0.5);
   position: fixed;
-
+  top:0;
   padding: 20px;
 }
 .white-bg {
   width: 100%;
   background: white;
   border-radius: 8px;
+  margin-top: 30px;
   padding: 20px;
 }
 
@@ -87,6 +90,7 @@ div {
   background: darkslateblue;
   padding: 15px;
   border-radius: 5px;
+  position: relative;
 }
 
 .menu a {
