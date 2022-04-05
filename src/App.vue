@@ -7,9 +7,17 @@
       <a>About</a>
     </div>
 
-    <div v-for="(product, i) in products" :key="i">
-      <h4>{{product[0]}}</h4>
-      <p>{{product[1]}} 만원</p>
+    <div class="black-bg" v-if="showModal" v-on:click="showModal=false" >
+      <div class="white-bg">
+        <h4>{{ products[modalProduct].title }}</h4>
+        <p>{{ products[modalProduct].content }}</p>
+      </div>
+    </div>
+
+    <div v-for="(product, i) in products" :key="i" class="product" v-on:click="showModal = true; modalProduct=i;">
+      <img :src="product.image" class="room-img"/>
+      <h4 v-on:click="showModal=true">{{product.title}}</h4>
+      <p>{{product.price}}원</p>
     </div>
 
   </div>
@@ -17,13 +25,25 @@
 
 <script>
 
+import data from './assets/oneroom.js';
+
 export default {
   name: 'App',
   data(){
     return {
-      products : [['역삼역원룸', 50], ['천호동원룸', 60], ['마포구원룸', 70]]
+      products : data,
+      modalProduct : 0,
+      showModal : false,
+      singo : [0, 0, 0],
+
     }
   },
+  methods: {
+    increase(i) {
+      this.$set(this.singo,i,this.singo[i]+1);
+    }
+  },
+
   components: {
 
   }
@@ -31,6 +51,30 @@ export default {
 </script>
 
 <style>
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+div {
+  box-sizing: border-box;
+}
+.black-bg {
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  position: fixed;
+
+  padding: 20px;
+}
+.white-bg {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,6 +92,15 @@ export default {
 .menu a {
   color: white;
   padding: 10px;
+}
+
+.room-img {
+  width: 100%;
+}
+
+.product {
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
 </style>
