@@ -7,20 +7,25 @@
       <a>About</a>
     </div>
 
-    <div class="black-bg" v-if="showModal" v-on:click="showModal=false" >
-      <div class="white-bg">
-        <img :src="products[modalProduct].image" style="width:100%"/>
-        <h4>{{ products[modalProduct].title }}</h4>
-        <p>{{ products[modalProduct].content }}</p>
-        <p>{{ products[modalProduct].price }}</p>
-      </div>
-    </div>
+    <Discount v-if="showDiscount" />
 
-    <div v-for="(product, i) in products" :key="i" class="product" v-on:click="showModal = true; modalProduct=i;">
-      <img :src="product.image" class="room-img"/>
-      <h4 v-on:click="showModal=true">{{product.title}}</h4>
-      <p>{{product.price}}원</p>
-    </div>
+    <transition name="fade">
+      <Modal v-bind:product="products[modalProduct]" v-bind:showModal="showModal" v-on:setShowModal="showModal = false;" />
+    </transition>
+<!--    <div class="start" :class="{ end : showModal }" >-->
+<!--    <Modal v-bind:product="products[modalProduct]" v-bind:showModal="showModal" v-on:setShowModal="showModal = false;" />-->
+<!--    </div>-->
+
+    <button v-on:click=priceSort>가격순정렬</button>
+    <button v-on:click=sortBack>되돌리기</button>
+
+    <Card v-for="(product, i) in products" :key="i" v-bind:product="product" v-bind:showModal="showModal" v-on:setShowModal="showModal = true; modalProduct = $event;"/>
+<!--    <Card v-bind:product="products[0]"/>-->
+<!--    <div v-for="(product, i) in products" :key="i" class="product" v-on:click="showModal = true; modalProduct=i;">-->
+<!--      <img :src="product.image" class="room-img"/>-->
+<!--      <h4 v-on:click="showModal=true">{{product.title}}</h4>-->
+<!--      <p>{{product.price}}원</p>-->
+<!--    </div>-->
 
   </div>
 </template>
@@ -28,31 +33,61 @@
 <script>
 
 import data from './assets/oneroom.js';
+import Discount from "./components/Discount";
+import Modal from "./components/Modal";
+import Card from "./components/Card";
 
 export default {
   name: 'App',
   data(){
     return {
-      products : data,
+      oriProducts : [...data],
+      products : [...data],
       modalProduct : 0,
       showModal : false,
+      showDiscount : true,
       singo : [0, 0, 0],
-
     }
   },
   methods: {
     increase(i) {
       this.$set(this.singo,i,this.singo[i]+1);
+    },
+    priceSort() {
+      this.products.sort((a, b) => {
+        return a.price - b.price;
+      });
+    },
+    sortBack() {
+      this.products = [...this.oriProducts];
     }
   },
+  created() {
 
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showDiscount = false;
+    }, 3000);
+  },
   components: {
-
+    Card : Card,
+    Modal: Modal,
+    Discount: Discount,
   }
 }
 </script>
 
 <style>
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: all 1s;
+}
+.fade-enter-to {
+  opacity: 1;
+}
 
 body {
   margin: 0;
@@ -61,21 +96,6 @@ body {
 
 div {
   box-sizing: border-box;
-}
-.black-bg {
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  position: fixed;
-  top:0;
-  padding: 20px;
-}
-.white-bg {
-  width: 100%;
-  background: white;
-  border-radius: 8px;
-  margin-top: 30px;
-  padding: 20px;
 }
 
 #app {
@@ -98,13 +118,13 @@ div {
   padding: 10px;
 }
 
-.room-img {
-  width: 100%;
+.start {
+  opacity: 0;
+  transition: all 0.25s;
 }
 
-.product {
-  margin-top: 40px;
-  margin-bottom: 40px;
+.end {
+  opacity: 1;
 }
 
 </style>
